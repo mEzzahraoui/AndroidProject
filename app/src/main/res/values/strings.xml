@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SAFI MAP</string>
+    <string name="facebook_app_id">587124891621513</string>
+    <string name="fb_login_protocol_scheme">fb587124891621513</string>
+    <string name="title_activity_maps">Map</string>
+
+</resources>
