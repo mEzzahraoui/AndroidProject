@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".RegistrationActivity"
-    tools:layout_editor_absoluteY="81dp"
-    android:background="#272650">
+    tools:layout_editor_absoluteY="81dp">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -17,7 +16,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -62,7 +62,7 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".PasswordActivity" />
-        <activity android:name=".RegistrationActivity"></activity>
+        <activity android:name=".RegistrationActivity" />
     </application>
 
 </manifest>

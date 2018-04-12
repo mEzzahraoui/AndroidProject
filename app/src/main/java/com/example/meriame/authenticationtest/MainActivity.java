@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +34,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -40,6 +43,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private static final  int RC_SIGN_IN=1;
 
     private FirebaseAuth mAuth;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
+
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
     private String email;
@@ -59,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        firebaseStorage= FirebaseStorage.getInstance();
+
+        storageReference=firebaseStorage.getReference();
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -67,14 +81,11 @@ public class MainActivity extends AppCompatActivity {
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
-                Toast.makeText(MainActivity.this, "register Callback on success", Toast.LENGTH_LONG).show();
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(MainActivity.this, "register Callback oncancel", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -109,15 +120,14 @@ public class MainActivity extends AppCompatActivity {
     //On appel cette methode si l authentification avec facebook reussie
     private void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        Toast.makeText(MainActivity.this, "handleFacebook", Toast.LENGTH_LONG).show();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(MainActivity.this, "handleFacebook success", Toast.LENGTH_LONG).show();
                             FirebaseUser user = mAuth.getCurrentUser();
+                            sendUserData(user);
                             updateUI(user);
                         } else {
                             Toast.makeText(MainActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
@@ -153,6 +163,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent second=new Intent(MainActivity.this, MapsActivity.class);
+                    startActivity(second);
+                    finish();
+
+
+                }
+                else {
+                   finish();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
 
     //On appel cette methode après l'authentification
     private void updateUI(FirebaseUser currentUser) {
@@ -161,13 +193,12 @@ public class MainActivity extends AppCompatActivity {
             //Check Permission
             //if the user has already accept the permission
             if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-
                 Intent second=new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(second);
                 finish();
             }
             else {
-                requestLocationPermission();
+                requestLocationPermission(currentUser);
             }
         }
         else {
@@ -179,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Cette methode est utilisée si l'utilisateur n'a pas encore accepté les permissions
-    private void requestLocationPermission(){
+    private void requestLocationPermission(FirebaseUser currentUser){
         // If the user has already denied the permission
         if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
             new AlertDialog.Builder(this)
@@ -200,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION} ,LOCATION_PERMISSION);
+
         }
     }
 
@@ -215,6 +247,13 @@ public class MainActivity extends AppCompatActivity {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
         Toast.makeText(MainActivity.this, "onclick", Toast.LENGTH_LONG).show();
+    }
+
+    private void sendUserData(FirebaseUser currentUser){
+        FirebaseDatabase firebaseDatabase=FirebaseDatabase.getInstance();
+        DatabaseReference myRef=firebaseDatabase.getReference("users").child(mAuth.getCurrentUser().getUid());
+        User user=new User(currentUser.getDisplayName(), currentUser.getEmail());
+        myRef.setValue(user);
     }
 
     @Override
@@ -260,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("firebaze", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            sendUserData(user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -271,9 +311,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickForgotPassword(View view) {
-        finish();
         Intent second=new Intent(MainActivity.this, PasswordActivity.class);
         startActivity(second);
+        finish();
 
     }
 
