@@ -10,6 +10,8 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -147,4 +149,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 10.2f));*/
 
     }
+    public void onSearch(View v){
+        switch (v.getId()){
+            case R.id.B_search:{
+                EditText Tf_Location=(EditText)findViewById(R.id.Tf_Location);
+                String location =Tf_Location.getText().toString();
+                List<Address> addressList=null;
+                MarkerOptions myMarker=new MarkerOptions();
+                if(!location.equals("")){
+                    Geocoder geocoder=new Geocoder(this);
+                    try {
+                        addressList=geocoder.getFromLocationName(location,20);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    for(int i=0;i<addressList.size();i++){
+                        Address myAdd=addressList.get(i);
+                        LatLng latLng=new LatLng(myAdd.getLatitude(),myAdd.getLongitude());
+                        myMarker.position(latLng);
+                        myMarker.title("your search result");
+                        mMap.addMarker(myMarker);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    }
+                }
+            }break;
+    }
+}
 }
