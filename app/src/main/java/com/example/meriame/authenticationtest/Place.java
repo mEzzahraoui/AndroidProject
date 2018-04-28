@@ -3,8 +3,11 @@ package com.example.meriame.authenticationtest;
 import java.util.Vector;
 
 public class Place {
-    private static  double latitude;
-    private static  double longitude;
+    private String name;
+    private String uri;
+    private String status;
+    private double latitude;
+    private double longitude;
     private String addedBy;
     private Vector<Comment> comments;
 
@@ -19,21 +22,44 @@ public class Place {
     private double note;
     public Place() {
     }
+    public String getName() {
+        return name;
+    }
 
-    public static double getLatitude() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public  double getLatitude() {
         return latitude;
     }
 
-    public static void setLatitude(double latitude) {
-        Place.latitude = latitude;
+    public  void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public static double getLongitude() {
+    public  double getLongitude() {
         return longitude;
     }
 
-    public static void setLongitude(double longitude) {
-        Place.longitude = longitude;
+    public  void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public String getAddedBy() {

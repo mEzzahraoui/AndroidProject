@@ -56,13 +56,22 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyBOI5sjp2nmmjt8qloM4FUwdzEtQLICC0E" />
 
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".PasswordActivity" />
         <activity android:name=".RegistrationActivity" />
+        <activity
+            android:name=".navigationBarActivity"
+            android:label="@string/title_activity_navigation_bar"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".PickplaceActivity"></activity>
+        <activity android:name=".AddPlace"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
     </application>
 
 </manifest>

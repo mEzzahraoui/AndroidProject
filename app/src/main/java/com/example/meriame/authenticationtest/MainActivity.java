@@ -168,7 +168,8 @@ public class MainActivity extends AppCompatActivity {
             case LOCATION_PERMISSION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent second=new Intent(MainActivity.this, MapsActivity.class);
+                  //  Intent second=new Intent(MainActivity.this, MapsActivity.class);
+                    Intent second=new Intent(MainActivity.this, navigationBarActivity.class);
                     startActivity(second);
                     finish();
 
@@ -193,7 +194,8 @@ public class MainActivity extends AppCompatActivity {
             //Check Permission
             //if the user has already accept the permission
             if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                Intent second=new Intent(MainActivity.this, MapsActivity.class);
+               // Intent second=new Intent(MainActivity.this, MapsActivity.class);
+                Intent second=new Intent(MainActivity.this, navigationBarActivity.class);
                 startActivity(second);
                 finish();
             }
@@ -254,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference myRef=firebaseDatabase.getReference("users").child(mAuth.getCurrentUser().getUid());
         User user=new User(currentUser.getDisplayName(), currentUser.getEmail());
         myRef.setValue(user);
+
     }
 
     @Override
