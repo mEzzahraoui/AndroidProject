@@ -13,9 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,6 +39,10 @@ public class AddPlace extends AppCompatActivity {
     EditText userNameEditText, userStautsEditText;
     ImageView userImageProfileView;
     LinearLayout saveProfileBtn;
+    Spinner spinner;
+    String names[]={"hospital","restaurant","school","cafe","shop"};
+    ArrayAdapter <String> adapter;
+    String type;
 
 
     //FIREBASE AUTHENTICATION FIELDS
@@ -64,6 +71,39 @@ public class AddPlace extends AppCompatActivity {
         userImageProfileView = (ImageView) findViewById(R.id.placeImageView);
 
         saveProfileBtn = (LinearLayout) findViewById(R.id.savePlace);
+        spinner=(Spinner)findViewById(R.id.spinner);
+        adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,names);
+        spinner.setAdapter(adapter);
+    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            switch (position){
+                case 0:
+                    type="hospital";
+                    break;
+                case 1:
+                    type="restaurant";
+                    break;
+                case 2:
+                    type="school";
+                    break;
+                case 3:
+                    type="cafe";
+                    break;
+                case 4:
+                    type="shop";
+                    break;
+            }
+        }
+
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    });
+
 
         //ASSIGN INSTANCE TO FIREBASE AUTH
         mAuth = FirebaseAuth.getInstance();
@@ -151,11 +191,13 @@ public class AddPlace extends AppCompatActivity {
                         Place place=new Place();
                         place.setName(username);
                         place.setStatus(userStatus);
+                        place.setType(type);
                         place.setNote(5);
                         place.setAddedBy(mAuth.getCurrentUser().getUid());
                         place.setUri(imageUrl.toString());
                         place.setLatitude(FMaps.latitude);
                         place.setLongitude(FMaps.longitude);
+
                         sendPlaceData(place);
                         mProgress.dismiss();
 

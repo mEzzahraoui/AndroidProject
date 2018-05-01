@@ -63,6 +63,7 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".PasswordActivity" />
         <activity android:name=".RegistrationActivity" />
+        <activity android:name=".InfoPlace" />
         <activity
             android:name=".navigationBarActivity"
             android:label="@string/title_activity_navigation_bar"

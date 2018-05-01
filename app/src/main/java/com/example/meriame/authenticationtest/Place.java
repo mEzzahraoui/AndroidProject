@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public class Place {
     private String name;
+    private String type;
     private String uri;
     private String status;
     private double latitude;
@@ -21,6 +22,13 @@ public class Place {
 
     private double note;
     public Place() {
+    }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     public String getName() {
         return name;

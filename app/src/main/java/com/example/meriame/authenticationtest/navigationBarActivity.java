@@ -1,5 +1,6 @@
 package com.example.meriame.authenticationtest;
 
+import android.app.Fragment;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -103,7 +104,7 @@ public class navigationBarActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainLayout, new FMaps()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainLayout, new FMaps(), "mMap").commit();
 
 
     }
@@ -140,9 +141,22 @@ public class navigationBarActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        FMaps f = (FMaps)getSupportFragmentManager().findFragmentByTag("mMap");
+
+        if(f!=null){
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_none) {
+                f.mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+                return true;
+            }
+            else if (id == R.id.action_satellite) {
+                f.mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                return true;
+            }
+            else if (id == R.id.action_normal) {
+                f.mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -156,7 +170,7 @@ public class navigationBarActivity extends AppCompatActivity
       //  android.support.v4.app.FragmentManager sfm=getSupportFragmentManager();
 
         if (id == R.id.nav_map) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainLayout, new FMaps()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainLayout, new FMaps(), "mMap").commit();
         } else if (id == R.id.nav_add_place) {
             user = FirebaseAuth.getInstance().getCurrentUser();
             Intent addPlace=new Intent(navigationBarActivity.this, AddPlace.class);

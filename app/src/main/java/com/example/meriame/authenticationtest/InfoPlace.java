@@ -24,7 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 public class InfoPlace extends AppCompatActivity {
-    //DECLARE THE FIELDS
+   /* //DECLARE THE FIELDS
     EditText userNameEditText, userStautsEditText;
     ImageView userImageProfileView;
     LinearLayout saveProfileBtn;
@@ -43,13 +43,13 @@ public class InfoPlace extends AppCompatActivity {
 
     //PROGRESS DIALOG
     ProgressDialog mProgress;
-
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infoplace);
-       ImpotInfoPlace();
+     /*  ImpotInfoPlace();
 
 
         Intent myIntent = getIntent(); // gets the previously created intent
@@ -100,10 +100,11 @@ public class InfoPlace extends AppCompatActivity {
 
 
             }
-        });
+        });*/
 
     }
 
+    /*
     private void ImpotInfoPlace() {
 
         final String username, userStatus;
@@ -131,7 +132,7 @@ public class InfoPlace extends AppCompatActivity {
                         mUserDatabse.child("status").setValue(userStatus);
                         mUserDatabse.child("userid").setValue(mAuth.getCurrentUser().getUid());
                         mUserDatabse.child("imageurl").setValue(imageUrl.toString());*/
-                        Place place = new Place();
+    /*                    Place place = new Place();
                         place.setName(username);
                         place.setStatus(userStatus);
                         place.setNote(5);
@@ -170,6 +171,6 @@ public class InfoPlace extends AppCompatActivity {
         myRef.setValue(place);
     }
 
-
+*/
 }
 
