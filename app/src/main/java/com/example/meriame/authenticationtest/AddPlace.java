@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,7 +39,7 @@ public class AddPlace extends AppCompatActivity {
     //DECLARE THE FIELDS
     EditText userNameEditText, userStautsEditText;
     ImageView userImageProfileView;
-    LinearLayout saveProfileBtn;
+    Button saveProfileBtn;
     Spinner spinner;
     String names[]={"hospital","restaurant","school","cafe","shop"};
     ArrayAdapter <String> adapter;
@@ -67,10 +68,9 @@ public class AddPlace extends AppCompatActivity {
         //ASSIGN ID'S
         userNameEditText = (EditText) findViewById(R.id.placeName);
         userStautsEditText = (EditText) findViewById(R.id.placeStatus);
-
+        saveProfileBtn =(Button)findViewById(R.id.ButtonSavePlace);
         userImageProfileView = (ImageView) findViewById(R.id.placeImageView);
 
-        saveProfileBtn = (LinearLayout) findViewById(R.id.savePlace);
         spinner=(Spinner)findViewById(R.id.spinner);
         adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,names);
         spinner.setAdapter(adapter);

@@ -9,10 +9,7 @@
             android:id="@+id/nav_map"
             android:icon="@drawable/ic_dialog_map"
             android:title="Your Place"/>
-        <item
-            android:id="@+id/nav_pick_place"
-            android:icon="@drawable/map_marker_2_24"
-            android:title="Pick Place"/>
+
         <item
             android:id="@+id/nav_add_place"
             android:icon="@drawable/add_24"

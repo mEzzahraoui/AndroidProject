@@ -146,7 +146,7 @@ public class navigationBarActivity extends AppCompatActivity
         if(f!=null){
             //noinspection SimplifiableIfStatement
             if (id == R.id.action_none) {
-                f.mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+                f.mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 return true;
             }
             else if (id == R.id.action_satellite) {
@@ -175,10 +175,6 @@ public class navigationBarActivity extends AppCompatActivity
             user = FirebaseAuth.getInstance().getCurrentUser();
             Intent addPlace=new Intent(navigationBarActivity.this, AddPlace.class);
             startActivity(addPlace);
-
-        } else if (id == R.id.nav_pick_place) {
-            Intent picker=new Intent(navigationBarActivity.this, PickplaceActivity.class);
-            startActivity(picker);
 
         } else if (id == R.id.nav_logout) {
             FirebaseAuth.getInstance().signOut();
