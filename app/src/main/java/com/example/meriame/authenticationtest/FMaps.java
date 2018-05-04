@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,11 +46,10 @@ import java.util.List;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FMaps extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener {
+public class FMaps extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMarkerClickListener {
 
     public GoogleMap mMap;
     private DatabaseReference mPlaces;
@@ -57,6 +58,7 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
     public static double longitude;
     public static double latitude;
     private Geocoder geocoder;
+    private CameraUpdate cameraUpdate = null;
 
     public FMaps() {
 
@@ -66,9 +68,9 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        geocoder=new Geocoder(getActivity());
-        View v=inflater.inflate(R.layout.fragment_fmaps, container, false);
-        Button button=(Button)v.findViewById(R.id.B_search);
+        geocoder = new Geocoder(getActivity());
+        View v = inflater.inflate(R.layout.fragment_fmaps, container, false);
+        Button button = (Button) v.findViewById(R.id.B_search);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,82 +120,18 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
         mMap = googleMap;
         googleMap.setOnMarkerClickListener(this);
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        Criteria criteria = new Criteria();
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-
             return;
         }
-
-        //Check if the network provider is enable
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    //get the longitude
-                    longitude = location.getLongitude();
-                    //get the latitude
-                    latitude = location.getLatitude();
-                    //instantiate the class latlng
-                    LatLng latLng = new LatLng(latitude, longitude);
-
-                    try {
-                        List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
-                        String str = listAddress.get(0).getLocality();
-                        mMap.addMarker(new MarkerOptions().position(latLng).title(str).icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.2f));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
-        } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    //get the longitude
-                    double longitude = location.getLongitude();
-                    //get the latitude
-                    double latitude = location.getLatitude();
-
-                    addMarkerFunction(longitude, latitude);
-
-
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
-        }
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        double latitude=location.getLatitude();
+        double longitude=location.getLongitude();
+        LatLng latLang = new LatLng(latitude, longitude);
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLang, 17);
+        mMap.animateCamera(cameraUpdate);
+        mMap.addMarker(new MarkerOptions().position(latLang));
 
         mPlaces.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
