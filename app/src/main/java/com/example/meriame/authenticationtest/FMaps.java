@@ -51,22 +51,22 @@ import static android.content.Context.LOCATION_SERVICE;
 public class FMaps extends Fragment implements OnMapReadyCallback,LocationListener,GoogleMap.OnMarkerClickListener {
 
     public GoogleMap mMap;
-    private ChildEventListener mChildEventListener;
     private DatabaseReference mPlaces;
-    Marker marker;
+    private Marker marker;
     private LocationManager locationManager;
     public static double longitude;
     public static double latitude;
+    private Geocoder geocoder;
 
     public FMaps() {
-        // Required empty public constructor
-    }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        geocoder=new Geocoder(getActivity());
         View v=inflater.inflate(R.layout.fragment_fmaps, container, false);
         Button button=(Button)v.findViewById(R.id.B_search);
         button.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +77,6 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
                 List<Address> addressList = null;
                 MarkerOptions myMarker = new MarkerOptions();
                 if (!location.equals("")) {
-                    Geocoder geocoder = new Geocoder(getActivity());
                     try {
                         addressList = geocoder.getFromLocationName(location, 20);
                     } catch (IOException e) {
@@ -96,12 +95,7 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
             }
 
         });
-        // Inflate the layout for this fragment
-        /*
-        location = (Button) view.findViewById(R.id.etlocation);
-    location.setText(menu);
-    location.setOnClickListener(this);
-         */
+
         return v;
     }
 
@@ -110,9 +104,20 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
         super.onViewCreated(view, savedInstanceState);
 
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        ChildEventListener mChildEventListener;
         mPlaces = FirebaseDatabase.getInstance().getReference("Places");
         mPlaces.push().setValue(marker);
+
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.MyMapp);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        mMap = googleMap;
+        googleMap.setOnMarkerClickListener(this);
+
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
 
@@ -130,8 +135,7 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
                     latitude = location.getLatitude();
                     //instantiate the class latlng
                     LatLng latLng = new LatLng(latitude, longitude);
-                    //instantiate the class Geocoder
-                    Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
+
                     try {
                         List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
                         String str = listAddress.get(0).getLocality();
@@ -191,15 +195,6 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
             });
         }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.MyMapp);
-        mapFragment.getMapAsync(this);
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        mMap = googleMap;
-        googleMap.setOnMarkerClickListener(this);
         mPlaces.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -271,8 +266,6 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
     private void addMarkerFunction(double longitude, double latitude) {
         //instantiate the class latlng
         LatLng latLng = new LatLng(latitude, longitude);
-        //instantiate the class Geocoder
-        Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
         try {
             List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
             String str = listAddress.get(0).getLocality();
@@ -288,35 +281,4 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
 
 }
 
-/*
- public void onSearch(View v) {
-        switch (v.getId()) {
-            case R.id.B_search: {
-                EditText Tf_Location = (EditText) getView().findViewById(R.id.Tf_Location);
-                String location = Tf_Location.getText().toString();
-                List<Address> addressList = null;
-                MarkerOptions myMarker = new MarkerOptions();
-                if (!location.equals("")) {
-                    Geocoder geocoder = new Geocoder(getActivity());
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 20);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
-                    for (int i = 0; i < addressList.size(); i++) {
-                        Address myAdd = addressList.get(i);
-                        LatLng latLng = new LatLng(myAdd.getLatitude(), myAdd.getLongitude());
-                        myMarker.position(latLng);
-                        myMarker.title("your search result");
-                        mMap.addMarker(myMarker);
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                    }
-                }
-            }
-            break;
-        }
-
-    }
-
- */

@@ -34,33 +34,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Initialize Location Manager
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
+
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
         //Check if the network provider is enable
-        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+
+                return;
+            }
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     //get the longitude
-                    double longitude=location.getLongitude();
+                    double longitude = location.getLongitude();
                     //get the latitude
-                    double latitude=location.getLatitude();
+                    double latitude = location.getLatitude();
                     //instantiate the class latlng
-                    LatLng latLng=new LatLng(latitude, longitude);
+                    LatLng latLng = new LatLng(latitude, longitude);
                     //instantiate the class Geocoder
-                    Geocoder geocoder=new Geocoder(getApplicationContext());
+                    Geocoder geocoder = new Geocoder(getApplicationContext());
                     try {
                         List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
-                        String str=listAddress.get(0).getLocality();
+                        String str = listAddress.get(0).getLocality();
                         mMap.addMarker(new MarkerOptions().position(latLng).title(str));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.2f));
 
@@ -130,21 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
     }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-/*        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 10.2f));*/
-
-    }
 }
