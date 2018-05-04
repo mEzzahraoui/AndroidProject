@@ -66,6 +66,7 @@ public class FMaps extends Fragment implements OnMapReadyCallback,LocationListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v=inflater.inflate(R.layout.fragment_fmaps, container, false);
         Button button=(Button)v.findViewById(R.id.B_search);
         button.setOnClickListener(new View.OnClickListener() {

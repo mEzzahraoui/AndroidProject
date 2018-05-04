@@ -34,12 +34,10 @@ public class InfoPlace extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infoplace);
-        textName=(TextView) findViewById(R.id.textName);
+        /*textName=(TextView) findViewById(R.id.textName);
         textAddress=(TextView) findViewById(R.id.textAddress);
         textAddress=(TextView) findViewById(R.id.textDescription);
-        imageView=(ImageView)findViewById(R.id.Userimage);
-
-
+        imageView=(ImageView)findViewById(R.id.Userimage);*/
 
     }
 
