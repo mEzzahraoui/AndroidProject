@@ -108,8 +108,6 @@ public class FMaps extends Fragment implements OnMapReadyCallback, LocationListe
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mPlaces = FirebaseDatabase.getInstance().getReference("Places");
         mPlaces.push().setValue(marker);
-
-
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.MyMapp);
         mapFragment.getMapAsync(this);
     }
@@ -121,17 +119,99 @@ public class FMaps extends Fragment implements OnMapReadyCallback, LocationListe
         googleMap.setOnMarkerClickListener(this);
 
         Criteria criteria = new Criteria();
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
+
             return;
         }
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        double latitude=location.getLatitude();
-        double longitude=location.getLongitude();
-        LatLng latLang = new LatLng(latitude, longitude);
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLang, 17);
-        mMap.animateCamera(cameraUpdate);
-        mMap.addMarker(new MarkerOptions().position(latLang));
+
+        //Check if the network provider is enable
+        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    //get the longitude
+                    longitude=location.getLongitude();
+                    //get the latitude
+                    latitude=location.getLatitude();
+                    //instantiate the class latlng
+                    LatLng latLng=new LatLng(latitude, longitude);
+                    try {
+                        List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
+                        String str=listAddress.get(0).getLocality();
+                        mMap.addMarker(new MarkerOptions().position(latLng).title(str));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.2f));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+        }
+        else if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    //get the longitude
+                    double longitude=location.getLongitude();
+                    //get the latitude
+                    double latitude=location.getLatitude();
+                    //instantiate the class latlng
+                    LatLng latLng=new LatLng(latitude, longitude);
+                    MarkerOptions options=new MarkerOptions();
+
+                    try {
+                        List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
+                        String str=listAddress.get(0).getLocality();
+                        Toast.makeText(getContext(), "l empacement "+str+"latitude "+latitude+ longitude+longitude+"", Toast.LENGTH_LONG).show();
+                        options.title(str);
+                        options.position(latLng);
+                        options.draggable(true);
+                        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        mMap.addMarker(options);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.2f));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+        }
 
         mPlaces.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -195,25 +275,10 @@ public class FMaps extends Fragment implements OnMapReadyCallback, LocationListe
     @Override
     public boolean onMarkerClick(Marker marker) {
         Intent myIntent = new Intent(getActivity(), InfoPlace.class);
-    //    myIntent.putExtra("PlaceName",marker.getTitle());
+        myIntent.putExtra("PlaceName",marker.getTitle());
         startActivity(myIntent);
 
         return false;
-    }
-
-    private void addMarkerFunction(double longitude, double latitude) {
-        //instantiate the class latlng
-        LatLng latLng = new LatLng(latitude, longitude);
-        try {
-            List<Address> listAddress = geocoder.getFromLocation(latitude, longitude, 1);
-            String str = listAddress.get(0).getLocality();
-            mMap.addMarker(new MarkerOptions().position(latLng).title(str));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.2f));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
