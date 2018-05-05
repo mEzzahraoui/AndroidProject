@@ -59,6 +59,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeName" />
 
+
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"
@@ -72,6 +73,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeStatus" />
+    <EditText
+        android:id="@+id/placeAdd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginStart="25dp"
+        android:hint="Address"
+        android:padding="15dp"
+        android:textAlignment="center"
+        android:textColorHint="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/ButtonSavePlace"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
 
     <Button
@@ -92,7 +111,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner"
-        android:onClick="saveUserProfile"/>
+        />
 
 
 </android.support.constraint.ConstraintLayout>

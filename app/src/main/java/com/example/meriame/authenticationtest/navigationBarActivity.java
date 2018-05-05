@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+
 public class navigationBarActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

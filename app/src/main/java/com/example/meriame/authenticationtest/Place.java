@@ -1,16 +1,18 @@
 package com.example.meriame.authenticationtest;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Place {
     private String name;
+    private String address;
     private String type;
     private String uri;
     private String status;
     private double latitude;
     private double longitude;
     private String addedBy;
-    private Vector<Comment> comments;
+    private ArrayList<Comment> comments;
 
     public double getNote() {
         return note;
@@ -23,6 +25,14 @@ public class Place {
     private double note;
     public Place() {
     }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getType() {
         return type;
     }
@@ -78,15 +88,16 @@ public class Place {
         this.addedBy = addedBy;
     }
 
-    public Vector<Comment> getComments() {
+    public ArrayList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(Vector<Comment> comments) {
+    public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
 
     public void AddComment(Comment c){
         comments.add(c);
     }
+
 }

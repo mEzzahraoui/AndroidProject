@@ -33,11 +33,14 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class AddPlace extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 3;
     private static final int SELECT_FILE = 2;
     //DECLARE THE FIELDS
-    EditText userNameEditText, userStautsEditText;
+    EditText userNameEditText, userStautsEditText,userAddsEditText;
     ImageView userImageProfileView;
     Button saveProfileBtn;
     Spinner spinner;
@@ -70,11 +73,12 @@ public class AddPlace extends AppCompatActivity {
         userStautsEditText = (EditText) findViewById(R.id.placeStatus);
         saveProfileBtn =(Button)findViewById(R.id.ButtonSavePlace);
         userImageProfileView = (ImageView) findViewById(R.id.placeImageView);
+        userAddsEditText=(EditText) findViewById(R.id.placeAdd);
 
         spinner=(Spinner)findViewById(R.id.spinner);
         adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,names);
         spinner.setAdapter(adapter);
-    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -161,10 +165,11 @@ public class AddPlace extends AppCompatActivity {
 
     private void saveUserProfile() {
 
-        final String username, userStatus;
+        final String username, userStatus,userAdd;
 
         username = userNameEditText.getText().toString().trim();
         userStatus = userStautsEditText.getText().toString().trim();
+        userAdd=userAddsEditText.getText().toString().trim();
 
         if( !TextUtils.isEmpty(username) && !TextUtils.isEmpty(userStatus))
         {
@@ -172,7 +177,7 @@ public class AddPlace extends AppCompatActivity {
             if( imageHoldUri != null )
             {
 
-                mProgress.setTitle("Saveing Place");
+                mProgress.setTitle("Saving Place");
                 mProgress.setMessage("Please wait....");
                 mProgress.show();
 
@@ -182,12 +187,7 @@ public class AddPlace extends AppCompatActivity {
                 mChildStorage.putFile(imageHoldUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                         final Uri imageUrl = taskSnapshot.getDownloadUrl();
-                        /*mUserDatabse.child("username").setValue(username);
-                        mUserDatabse.child("status").setValue(userStatus);
-                        mUserDatabse.child("userid").setValue(mAuth.getCurrentUser().getUid());
-                        mUserDatabse.child("imageurl").setValue(imageUrl.toString());*/
                         Place place=new Place();
                         place.setName(username);
                         place.setStatus(userStatus);
@@ -197,10 +197,15 @@ public class AddPlace extends AppCompatActivity {
                         place.setUri(imageUrl.toString());
                         place.setLatitude(FMaps.latitude);
                         place.setLongitude(FMaps.longitude);
-
+                        place.setAddress(userAdd);
+                        Comment comment=new Comment();
+                        comment.setUserName(mAuth.getCurrentUser().getDisplayName());
+                        comment.setUserComment(userStatus);
+                        ArrayList<Comment> comments=new ArrayList<Comment>();
+                        comments.add(comment);
+                        place.setComments(comments);
                         sendPlaceData(place);
                         mProgress.dismiss();
-
                         finish();
                         Intent moveToHome = new Intent(AddPlace.this, MainActivity.class);
                         moveToHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
